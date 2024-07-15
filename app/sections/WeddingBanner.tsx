@@ -3,7 +3,7 @@ import weddingReel from '../img/wedding-banner/wedding-reel.mov'
 const WeddingBanner = () => {
   return (
     <div className="bg-black">
-      <Link href={'./photo-gallery'} className=" group relative">
+      <Link href={'./weddings'} className=" group relative">
         <video
           src={weddingReel}
           autoPlay

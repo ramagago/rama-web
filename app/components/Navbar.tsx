@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
   ) as AuthContextProps // Asignar tipo AuthContextProps
 
   const [menuOpen, setMenuOpen] = useState<boolean>(false) // Tipar como boolean
-  const [isHomePage, setIsHomePage] = useState<boolean | null>(null) // Tipar como boolean o null
+  const [isHomePage, setIsHomePage] = useState<boolean>(true) // Tipar como boolean o null
   const switchRef = useRef<HTMLInputElement>(null)
 
   const pathname = usePathname()
@@ -42,7 +42,11 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="h-20 fixed w-full flex justify-between items-center z-50">
+    <nav
+      className={`h-20 fixed w-full flex justify-between items-center z-50 ${
+        isHomePage ? 'bg-transparent' : 'bg-white'
+      }`}
+    >
       <div></div>
       <Link href="./">
         <h1
