@@ -1,13 +1,23 @@
-// components/ModalAddFiles.js
-import { useState } from 'react'
+// components/ModalAddFiles.tsx
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useDropzone } from 'react-dropzone'
 
-const ModalAddFiles = ({ isOpen, onClose, categoryId }) => {
-  const [files, setFiles] = useState([])
+interface ModalAddFilesProps {
+  isOpen: boolean
+  onClose: () => void
+  categoryId: string
+}
+
+const ModalAddFiles: React.FC<ModalAddFilesProps> = ({
+  isOpen,
+  onClose,
+  categoryId,
+}) => {
+  const [files, setFiles] = useState<File[]>([])
 
   const { getRootProps, getInputProps } = useDropzone({
-    onDrop: (acceptedFiles) => {
+    onDrop: (acceptedFiles: File[]) => {
       setFiles(acceptedFiles)
     },
   })
@@ -58,7 +68,7 @@ const ModalAddFiles = ({ isOpen, onClose, categoryId }) => {
         </div>
         <ul className="mt-4">
           {files.map((file) => (
-            <li key={file.path}>{file.path}</li>
+            <li key={file.name}>{file.name}</li>
           ))}
         </ul>
         <div className="mt-4 flex justify-end">

@@ -10,9 +10,26 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { FaPen } from 'react-icons/fa6'
 
-export const MasonryGrid = ({ items, editMode, onPhotoSelect, categoryId }) => {
+interface Photo {
+  id: string
+  image: string
+}
+
+interface MasonryGridProps {
+  items: Photo[]
+  editMode: boolean | undefined
+  onPhotoSelect: (id: string) => void
+  categoryId: string
+}
+
+export const MasonryGrid: React.FC<MasonryGridProps> = ({
+  items,
+  editMode,
+  onPhotoSelect,
+  categoryId,
+}) => {
   const [columns, setColumns] = useState(2)
-  const [selectedPhotos, setSelectedPhotos] = useState([])
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
 
   useEffect(() => {
     const handleResize = () => {
@@ -35,7 +52,7 @@ export const MasonryGrid = ({ items, editMode, onPhotoSelect, categoryId }) => {
     }
   }, [])
 
-  const columnWrappers = {}
+  const columnWrappers: { [key: string]: Photo[] } = {}
   for (let i = 0; i < columns; i++) {
     columnWrappers[`column${i}`] = []
   }
@@ -45,7 +62,7 @@ export const MasonryGrid = ({ items, editMode, onPhotoSelect, categoryId }) => {
     columnWrappers[`column${column}`].push(item)
   })
 
-  const handlePhotoClick = (id) => {
+  const handlePhotoClick = (id: string) => {
     setSelectedPhotos((prevSelectedPhotos) => {
       const isSelected = prevSelectedPhotos.includes(id)
       const updatedSelectedPhotos = isSelected
@@ -56,7 +73,11 @@ export const MasonryGrid = ({ items, editMode, onPhotoSelect, categoryId }) => {
     })
   }
 
-  const SortableItem = ({ id, children, draggable }) => {
+  const SortableItem: React.FC<{
+    id: string
+    children: React.ReactNode
+    draggable: boolean
+  }> = ({ id, children, draggable }) => {
     const {
       attributes,
       listeners,

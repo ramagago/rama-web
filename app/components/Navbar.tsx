@@ -1,17 +1,18 @@
 'use client'
-
 import { useContext, useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import BurgerIcon from './BurgerIcon'
-import { AuthContext } from '../context/authContext'
+import { AuthContext, AuthContextProps } from '../context/authContext' // Importar AuthContextProps
 import Switch from './Switch'
 
 const Navbar: React.FC = () => {
-  const { isAdmin, setIsAdmin } = useContext(AuthContext)
+  const { isAdmin, setIsAdmin, editMode, setEditMode } = useContext(
+    AuthContext
+  ) as AuthContextProps // Asignar tipo AuthContextProps
 
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [isHomePage, setIsHomePage] = useState(null)
+  const [menuOpen, setMenuOpen] = useState<boolean>(false) // Tipar como boolean
+  const [isHomePage, setIsHomePage] = useState<boolean | null>(null) // Tipar como boolean o null
   const switchRef = useRef<HTMLInputElement>(null)
 
   const pathname = usePathname()

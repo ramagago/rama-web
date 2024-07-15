@@ -2,14 +2,20 @@
 
 import { useContext, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AuthContext } from '../context/authContext'
+import { AuthContext, AuthContextProps } from '../context/authContext'
 
 const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
-  const { setIsAdmin } = useContext(AuthContext)
+  const authContext = useContext(AuthContext)
+
+  if (!authContext) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+
+  const { setIsAdmin } = authContext as AuthContextProps
 
   const handleLogin = async () => {
     const payload = { username, password }
@@ -32,8 +38,8 @@ const Login = () => {
       localStorage.setItem('jwtToken', token)
       setIsAdmin(true)
       router.push('/')
-    } catch (error) {
-      setError(error.message)
+    } catch (error: any) {
+      setError(error.message as string)
     }
   }
 

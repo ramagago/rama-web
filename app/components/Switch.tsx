@@ -1,12 +1,22 @@
-import React, { forwardRef, useContext } from 'react'
-import { AuthContext } from '../context/authContext'
+import React, { forwardRef, useContext, RefObject } from 'react'
+import { AuthContext, AuthContextProps } from '../context/authContext'
 
-const Switch = forwardRef<HTMLInputElement>((props, ref) => {
-  const { editMode, setEditMode } = useContext(AuthContext)
+interface SwitchProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+const Switch = forwardRef<HTMLInputElement, SwitchProps>((props, ref) => {
+  const authContext = useContext(AuthContext)
+
+  if (!authContext) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+
+  const { editMode, setEditMode }: AuthContextProps = authContext
 
   const handleChange = () => {
-    setEditMode(!editMode)
-    console.log('Edit mode:', !editMode)
+    if (setEditMode) {
+      setEditMode(!editMode)
+      console.log('Edit mode:', !editMode)
+    }
   }
 
   return (

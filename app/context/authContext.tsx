@@ -1,9 +1,22 @@
 'use client'
-import { createContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect, ReactNode } from 'react'
 
-export const AuthContext = createContext({})
+export interface AuthContextProps {
+  isAdmin: boolean
+  setIsAdmin: (isAdmin: boolean) => void
+  editMode: boolean
+  setEditMode: (editMode: boolean) => void
+}
 
-const AuthProvider = ({ children }) => {
+export const AuthContext = createContext<AuthContextProps | undefined>(
+  undefined
+)
+
+interface AuthProviderProps {
+  children: ReactNode
+}
+
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false)
   const [editMode, setEditMode] = useState(true)
 

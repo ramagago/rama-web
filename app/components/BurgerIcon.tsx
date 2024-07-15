@@ -3,7 +3,7 @@ import React from 'react'
 interface BurgerIconProps {
   menuOpen: boolean
   handleToggle: () => void
-  isHomePage: boolean
+  isHomePage: boolean | null
 }
 
 const BurgerIcon: React.FC<BurgerIconProps> = ({

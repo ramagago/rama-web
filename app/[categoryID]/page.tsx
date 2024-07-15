@@ -2,7 +2,12 @@
 import React, { useContext, useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core'
+import {
+  DndContext,
+  closestCenter,
+  DragOverlay,
+  UniqueIdentifier,
+} from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { MasonryGrid } from '../components/MasonryGrid'
 import { AuthContext } from '../context/authContext'
@@ -10,13 +15,28 @@ import ModalAddFiles from '../components/ModalAddFiles'
 import { FaPlus, FaTrash } from 'react-icons/fa'
 import axios from 'axios'
 
-const PhotoGallery = ({ params }) => {
+interface Photo {
+  id: string
+  image: string
+  selected: boolean
+  order: number
+}
+
+interface PhotoGalleryProps {
+  params: {
+    categoryID: string
+  }
+}
+
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
   const categoryId = params.categoryID
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { editMode } = useContext(AuthContext)
-  const [items, setItems] = useState([])
-  const [selectedPhotos, setSelectedPhotos] = useState([])
-  const [activeId, setActiveId] = useState(null)
+  // const { editMode } = useContext(AuthContext)
+  const contexto = useContext(AuthContext)
+  const editMode = contexto?.editMode
+  const [items, setItems] = useState<Photo[]>([])
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -24,9 +44,9 @@ const PhotoGallery = ({ params }) => {
         const response = await axios.get(
           `http://localhost:3001/images?category=${categoryId}`
         )
-        const images = response.data
-          .sort((a, b) => a.order - b.order) // Ordenar por el campo 'order'
-          .map((image, index) => ({
+        const images: Photo[] = response.data
+          .sort((a: Photo, b: Photo) => a.order - b.order)
+          .map((image: any) => ({
             id: image.id.toString(),
             image: image.url,
             selected: false,
@@ -41,11 +61,14 @@ const PhotoGallery = ({ params }) => {
     fetchImages()
   }, [categoryId])
 
-  const handleDragStart = (event) => {
+  const handleDragStart = (event: { active: { id: UniqueIdentifier } }) => {
     setActiveId(event.active.id)
   }
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: {
+    active: { id: UniqueIdentifier }
+    over: { id: UniqueIdentifier } | null
+  }) => {
     const { active, over } = event
     setActiveId(null)
 
@@ -98,7 +121,7 @@ const PhotoGallery = ({ params }) => {
     setIsModalOpen(false)
   }
 
-  const handleSelectPhoto = (id) => {
+  const handleSelectPhoto = (id: string) => {
     setItems((prevItems) =>
       prevItems.map((item) =>
         item.id === id ? { ...item, selected: !item.selected } : item
