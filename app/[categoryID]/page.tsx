@@ -141,36 +141,81 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
 
   return (
     <div className="bg-white">
-      <div className="m-2">
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <MasonryGrid
-            items={items}
-            editMode={editMode}
-            onPhotoSelect={handleSelectPhoto}
-            categoryId={categoryId}
-          />
-          <DragOverlay>
-            {activeItem ? (
-              <div className="relative overflow-hidden post">
-                <Image
-                  className="w-full grayscale-[50%] rounded-lg"
-                  src={activeItem.image}
-                  alt={`Image ${activeItem.id}`}
-                  width={140}
-                  height={140}
-                />
-                <div className="absolute top-0 left-0 w-full h-full bg-[#161616] flex items-center justify-center opacity-0 transition-opacity duration-300 overlay">
-                  <h3 className="text-white">{`Image ${activeItem.id}`}</h3>
-                </div>
+      <nav className="bg-white w-screen h-12 flex justify-center border-gray-300 fixed top-20 z-40">
+        <div className="cursor-pointer py-2 px-4">
+          <Link href="/fashion">
+            <div
+              className={`transition-all duration-100 ${
+                categoryId === 'fashion' ? 'text-red-800' : 'text-gray-600'
+              } hover:text-gray-400`}
+            >
+              Fashion
+            </div>
+          </Link>
+        </div>
+        <div className="cursor-pointer py-2 px-4">
+          <Link href="/home">
+            <div
+              className={`transition-all duration-100 ${
+                categoryId === 'home' ? 'text-red-800' : 'text-gray-600'
+              } hover:text-gray-400`}
+            >
+              Home
+            </div>
+          </Link>
+        </div>
+        <div className="cursor-pointer py-2 px-4">
+          <Link href="/lifestyle">
+            <div
+              className={`transition-all duration-100 ${
+                categoryId === 'lifestyle' ? 'text-red-800' : 'text-gray-600'
+              } hover:text-gray-400`}
+            >
+              Lifestyle
+            </div>
+          </Link>
+        </div>
+        <div className="cursor-pointer py-2 px-4">
+          <Link href="/weddings">
+            <div
+              className={`transition-all duration-100 ${
+                categoryId === 'weddings' ? 'text-red-800' : 'text-gray-600'
+              } hover:text-gray-400`}
+            >
+              Weddings
+            </div>
+          </Link>
+        </div>
+      </nav>
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <MasonryGrid
+          items={items}
+          editMode={editMode}
+          onPhotoSelect={handleSelectPhoto}
+          categoryId={categoryId}
+        />
+        <DragOverlay>
+          {activeItem ? (
+            <div className="relative overflow-hidden post">
+              <Image
+                className="w-full grayscale-[50%] rounded-lg"
+                src={activeItem.image}
+                alt={`Image ${activeItem.id}`}
+                width={140}
+                height={140}
+              />
+              <div className="absolute top-0 left-0 w-full h-full bg-[#161616] flex items-center justify-center opacity-0 transition-opacity duration-300 overlay">
+                <h3 className="text-white">{`Image ${activeItem.id}`}</h3>
               </div>
-            ) : null}
-          </DragOverlay>
-        </DndContext>
-      </div>
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+
       {editMode && (
         <div className="flex space-x-2">
           <button
