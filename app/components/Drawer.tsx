@@ -39,7 +39,7 @@ const Puller = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'light' ? grey[300] : grey[900],
   borderRadius: 3,
   position: 'absolute',
-  top: 8,
+  top: drawerBleeding + 10,
   left: 'calc(50% - 15px)',
 }))
 
