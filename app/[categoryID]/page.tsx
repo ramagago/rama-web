@@ -10,6 +10,7 @@ import {
 } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { MasonryGrid } from '../components/MasonryGrid'
+import SwipeableEdgeDrawer from '../components/Drawer'
 import { AuthContext } from '../context/authContext'
 import ModalAddFiles from '../components/ModalAddFiles'
 import { FaPlus, FaTrash } from 'react-icons/fa'
@@ -141,6 +142,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
 
   return (
     <div className="bg-white">
+      <SwipeableEdgeDrawer />
       <nav className="bg-white w-screen h-12 flex justify-center border-gray-300 fixed top-20 z-40">
         <div className="cursor-pointer py-2 px-4">
           <Link href="/fashion">

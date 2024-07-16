@@ -14,15 +14,15 @@ const Contact = () => {
   }
   return (
     <div
-      className="w-screen bg-white text-gray-500 flex flex-col justify-center items-center"
+      className="w-full bg-white text-gray-500 flex flex-col justify-center items-center"
       id="contact"
     >
       <h1 className="mt-12 text-xl">Contact</h1>
       <form
         onSubmit={handleSubmit}
-        className="flex justify-center items-center flex-col lg:flex-row my-12"
+        className="w-1/2 sm:w-1/2 flex justify-center items-center flex-col lg:flex-row my-12"
       >
-        <div className="relative h-11 w-full min-w-[250px]">
+        <div className="relative w-full min-w-[250px]">
           <input
             placeholder=""
             className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
@@ -31,7 +31,7 @@ const Contact = () => {
             Email
           </label>
         </div>
-        <div className="relative h-11 w-full min-w-[250px] mx-36 my-24 lg:my-0">
+        <div className="relative h-11 w-full min-w-[250px] my-12 mx-36 sm:my-16 lg:my-0">
           <input
             placeholder=""
             className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
@@ -48,7 +48,7 @@ const Contact = () => {
         />
       </form>
       <a
-        className="mb-12 text-sm p-2 hover:text-gray-300"
+        className="mb-20 text-sm p-2 hover:text-gray-300"
         href="https://www.instagram.com/ramagago"
         target="blank"
       >
