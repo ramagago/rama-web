@@ -102,7 +102,7 @@ export default function SwipeableEdgeDrawer(props: Props) {
             left: 0,
           }}
         >
-          {/* <Puller /> */}
+          {open ? <Puller /> : null}
           {!open ? (
             <Typography sx={{ p: 2, color: 'text.secondary' }}>
               Contact
