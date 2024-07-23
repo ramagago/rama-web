@@ -98,6 +98,7 @@ export default function SwipeableEdgeDrawer(props: Props) {
             visibility: 'visible',
             right: 0,
             left: 0,
+            width: '100vw',
           }}
         >
           {open ? <Puller /> : null}

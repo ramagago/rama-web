@@ -15,12 +15,14 @@ import { AuthContext } from '../context/authContext'
 import ModalAddFiles from '../components/ModalAddFiles'
 import { FaPlus, FaTrash } from 'react-icons/fa'
 import axios from 'axios'
+import { FaArrowLeft } from 'react-icons/fa6'
 
 interface Photo {
   id: string
   image: string
   selected: boolean
   order: number
+  description: string
 }
 
 interface PhotoGalleryProps {
@@ -38,6 +40,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
   const [items, setItems] = useState<Photo[]>([])
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
+  const [isDraggable, setIsDraggable] = useState(true)
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -52,6 +55,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
             image: image.url,
             selected: false,
             order: image.order,
+            descritpion: image.descritpion,
           }))
         setItems(images)
       } catch (error) {
@@ -98,20 +102,24 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
     }
   }
 
-  const handleDeletePhotos = () => {
-    const photosToDelete = items.filter((item) => item.selected)
-    const remainingPhotos = items.filter((item) => !item.selected)
-
-    // Delete photos in the backend
-    axios
-      .post('http://localhost:3001/images/deleteMany', {
-        ids: photosToDelete.map((item) => parseInt(item.id)),
+  const handleDeletePhotos = async (selectedPhotos: string[]) => {
+    try {
+      // Delete photos in the backend
+      const response = await axios.delete('http://localhost:3001/images/many', {
+        data: selectedPhotos, // Asegúrate de enviar el cuerpo en formato JSON
+        headers: {
+          'Content-Type': 'application/json', // Establece el tipo de contenido como JSON
+        },
       })
-      .then(() => console.log('Successfully deleted photos'))
-      .catch((error) => console.error('Failed to delete photos:', error))
-
-    setItems(remainingPhotos)
-    setSelectedPhotos([])
+      console.log('Successfully deleted photos')
+      // Aquí deberías actualizar el estado local para reflejar los cambios
+      setItems((prevItems) =>
+        prevItems.filter((item) => !selectedPhotos.includes(item.id))
+      )
+      setSelectedPhotos([]) // Limpiar la selección
+    } catch (error) {
+      console.error('Failed to delete photos:', error)
+    }
   }
 
   const handleOpenModal = () => {
@@ -136,6 +144,14 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
       console.log('Selected photos:', updatedSelectedPhotos)
       return updatedSelectedPhotos
     })
+  }
+
+  const handleSelectButtonClick = () => {
+    setIsDraggable((prev) => !prev)
+    console.log('isDraggable:', !isDraggable)
+    if (!isDraggable) {
+      setSelectedPhotos([])
+    }
   }
 
   const activeItem = items.find((item) => item.id === activeId)
@@ -189,6 +205,14 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
           </Link>
         </div>
       </nav>
+      {editMode && (
+        <button
+          onClick={handleSelectButtonClick}
+          className=" fixed top-20 right-8 z-40 mb-4 p-2 h-10 w-24 bg-gray-400 hover:bg-gray-600 active:bg-gray-500 text-white rounded-full"
+        >
+          {!isDraggable ? 'Cancel' : 'Select'}
+        </button>
+      )}
       <DndContext
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
@@ -199,6 +223,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
           editMode={editMode}
           onPhotoSelect={handleSelectPhoto}
           categoryId={categoryId}
+          isDraggable={isDraggable}
+          selectedPhotos={selectedPhotos}
+          setSelectedPhotos={setSelectedPhotos}
         />
         <DragOverlay>
           {activeItem ? (
@@ -227,14 +254,16 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
             <FaPlus />
           </button>
           <button
-            onClick={handleDeletePhotos}
+            onClick={() => handleDeletePhotos(selectedPhotos)}
             className="fixed p-6 bg-red-900 text-white bottom-24 right-24 rounded-full hover:bg-red-300 active:bg-red-700"
           >
             <FaTrash />
           </button>
         </div>
       )}
-      <Link href="/">volver</Link>
+      <Link className="fixed top-8 left-8 z-[1401]" href="/">
+        <FaArrowLeft className="text-gray-400 text-2xl  hover:text-gray-600 active:text-gray-500" />
+      </Link>
       <ModalAddFiles
         isOpen={isModalOpen}
         onClose={handleCloseModal}
