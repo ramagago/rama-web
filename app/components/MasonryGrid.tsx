@@ -9,10 +9,12 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { FaPen } from 'react-icons/fa6'
+import EditDescriptionModal from './EditDescriptionModal'
 
 interface Photo {
   id: string
   image: string
+  description: string
 }
 
 interface MasonryGridProps {
@@ -20,16 +22,29 @@ interface MasonryGridProps {
   editMode: boolean | undefined
   onPhotoSelect: (id: string) => void
   categoryId: string
+  isDraggable: boolean
+  selectedPhotos: string[]
+  setSelectedPhotos: React.Dispatch<React.SetStateAction<string[]>>
 }
 
 export const MasonryGrid: React.FC<MasonryGridProps> = ({
   items,
   editMode,
-  onPhotoSelect,
+  selectedPhotos,
+  setSelectedPhotos,
   categoryId,
+  isDraggable,
 }) => {
   const [columns, setColumns] = useState(2)
-  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const handleOpenModal = () => {
+    setIsModalVisible(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false)
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -106,12 +121,8 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
     )
   }
 
-  const handleImageClick = () => {
-    console.log('click en la imagen')
-  }
-
   return (
-    <div className="relative w-full flex gap-2 p-[100px_2vw]">
+    <div className="relative top-12 w-full flex gap-2 p-[100px_2vw]">
       {Object.keys(columnWrappers).map((columnKey, idx) => (
         <div key={idx} className="flex flex-1 flex-col gap-2">
           <SortableContext
@@ -141,9 +152,9 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
                   ) : (
                     <>
                       <div className="relative overflow-hidden">
-                        <SortableItem id={post.id} draggable={editMode}>
+                        <SortableItem id={post.id} draggable={isDraggable}>
                           <Image
-                            onClick={console.log}
+                            onClick={() => handlePhotoClick(post.id)}
                             className="w-full grayscale-[50%] rounded-xl"
                             src={post.image}
                             alt={`Image ${post.id}`}
@@ -153,12 +164,16 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
                         </SortableItem>
                         {editMode && (
                           <FaPen
-                            className="absolute text-white text-3xl bottom-2 right-2 p-2 bg-yellow-500 hover:bg-yellow-200 active:bg-yellow-300 rounded-full"
-                            onClick={() =>
-                              console.log(`editando foto ${post.id}`)
-                            }
+                            className="absolute cursor-pointer text-white text-3xl bottom-2 right-2 p-2 bg-gray-500 hover:bg-gray-200 active:bg-gray-700 rounded-full"
+                            onClick={handleOpenModal} // Corregido aquí
                           />
                         )}
+                        <EditDescriptionModal
+                          isVisible={isModalVisible}
+                          onClose={handleCloseModal}
+                          imageId={post.id} // Pasar directamente post.id
+                          currentDescription={post.description} // Pasar directamente post.description
+                        />
                       </div>
                     </>
                   )}
