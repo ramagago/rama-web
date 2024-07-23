@@ -37,13 +37,21 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
 }) => {
   const [columns, setColumns] = useState(2)
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selectedEditImageId, setSelectedEditImageId] = useState<string | null>(
+    null
+  ) // Nuevo estado
+  const [currentDescription, setCurrentDescription] = useState<string>('') // Nuevo estado
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (imageId: string, description: string) => {
+    setSelectedEditImageId(imageId)
+    setCurrentDescription(description)
     setIsModalVisible(true)
   }
 
   const handleCloseModal = () => {
     setIsModalVisible(false)
+    setSelectedEditImageId(null)
+    setCurrentDescription('')
   }
 
   useEffect(() => {
@@ -165,15 +173,11 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
                         {editMode && (
                           <FaPen
                             className="absolute cursor-pointer text-white text-3xl bottom-2 right-2 p-2 bg-gray-500 hover:bg-gray-200 active:bg-gray-700 rounded-full"
-                            onClick={handleOpenModal} // Corregido aquí
+                            onClick={() =>
+                              handleOpenModal(post.id, post.description)
+                            } // Modificado aquí
                           />
                         )}
-                        <EditDescriptionModal
-                          isVisible={isModalVisible}
-                          onClose={handleCloseModal}
-                          imageId={post.id} // Pasar directamente post.id
-                          currentDescription={post.description} // Pasar directamente post.description
-                        />
                       </div>
                     </>
                   )}
@@ -183,6 +187,12 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
           </SortableContext>
         </div>
       ))}
+      <EditDescriptionModal
+        isVisible={isModalVisible}
+        onClose={handleCloseModal}
+        imageId={selectedEditImageId ?? ''} // Pasar el id de la imagen seleccionada
+        currentDescription={currentDescription} // Pasar la descripción actual de la imagen
+      />
     </div>
   )
 }

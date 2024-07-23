@@ -1,3 +1,5 @@
+// EditDescriptionModal.tsx
+
 import { useEffect, FC, useState, FormEvent } from 'react'
 
 interface ModalProps {
@@ -15,7 +17,6 @@ const EditDescriptionModal: FC<ModalProps> = ({
 }) => {
   const [showAnimation, setShowAnimation] = useState(false)
   const [description, setDescription] = useState(currentDescription)
-
   const handleChangeDescription = async (e: FormEvent) => {
     e.preventDefault()
 
@@ -42,17 +43,18 @@ const EditDescriptionModal: FC<ModalProps> = ({
     if (isVisible) {
       document.body.style.overflow = 'hidden'
       setShowAnimation(true)
-      setDescription(currentDescription) // Actualiza la descripción cuando el modal se hace visible
+      setDescription(currentDescription)
+      console.log(imageId) // Actualiza la descripción cuando el modal se hace visible
     } else {
       setShowAnimation(false)
       document.body.style.overflow = 'auto'
     }
-  }, [isVisible, currentDescription])
+  }, [isVisible, currentDescription, imageId])
 
   if (!isVisible && !showAnimation) return null
 
   return (
-    <div className="fixed inset-0 w-screen h-screen z-50 bg-black bg-opacity-10 flex items-center justify-center">
+    <div className="fixed inset-0 w-screen h-screen z-50 bg-black bg-opacity-70 flex items-center justify-center">
       <div
         className={`bg-white w-full xs:w-3/4 lg:w-1/2 rounded-lg p-6 relative flex flex-col items-center justify-center transition-transform duration-300 ${
           showAnimation ? 'animate-scale-up-in' : ''
@@ -76,15 +78,16 @@ const EditDescriptionModal: FC<ModalProps> = ({
               placeholder=""
               className="peer h-full w-full border-b border-blue-gray-200 bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline-none transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-500 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
-            <label className="after:content[''] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-gray-500 after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:after:scale-x-100 peer-focus:after:border-gray-900 peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-              Add or change photo info.
+            <label className="flex w-full select-none text-xs font-normal absolute left-0 -top-1.5 transition-all text-gray-500 peer-placeholder-shown:not(:focus):leading-tight peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-sm">
+              Write your new description
             </label>
           </div>
-          <input
+          <button
             type="submit"
-            value="Save"
             className="cursor-pointer p-2 text-sm hover:text-gray-300"
-          />
+          >
+            Save
+          </button>
         </form>
       </div>
     </div>

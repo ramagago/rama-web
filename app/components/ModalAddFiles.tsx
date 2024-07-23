@@ -23,32 +23,49 @@ const ModalAddFiles: React.FC<ModalAddFilesProps> = ({
   })
 
   const handleSubmit = async () => {
-    const formData = new FormData()
-    const imageData = files.map((file, index) => ({
-      description: '',
-      category: categoryId,
-      order: index + 1,
-    }))
+    const imageData = files.map(async (file, index) => {
+      // Aquí se obtiene la URL prefirmada y se sube el archivo a S3
+      const response = await fetch('http://localhost:3001/upload/upload-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: file.name }),
+      })
 
-    files.forEach((file) => {
-      formData.append('files', file)
+      const { uploadUrl, key } = await response.json()
+
+      // Subir archivo a S3
+      await fetch(uploadUrl, {
+        method: 'PUT',
+        body: file,
+      })
+
+      return {
+        description: '',
+        category: categoryId,
+        order: index + 1,
+        url: `https://ramawebsite.s3.amazonaws.com/${key}`, // Cambia esto según tu configuración
+      }
     })
-    formData.append('imageData', JSON.stringify(imageData))
+
+    const imageDataArray = await Promise.all(imageData)
 
     try {
       const response = await fetch('http://localhost:3001/images', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageData: imageDataArray }),
       })
 
       if (response.ok) {
-        console.log('Files uploaded successfully')
+        console.log('Files uploaded and data saved successfully')
         onClose()
       } else {
-        console.error('Failed to upload files')
+        console.error('Failed to upload files and save data')
       }
     } catch (error) {
-      console.error('Error uploading files', error)
+      console.error('Error uploading files and saving data', error)
     }
   }
 
