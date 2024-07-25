@@ -22,9 +22,23 @@ const ModalAddFiles: React.FC<ModalAddFilesProps> = ({
     },
   })
 
+  const getFileType = (file: File): string => {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'heif']
+    const videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'm4v'] // Añadido 'm4v' aquí
+
+    const extension = file.name.split('.').pop()?.toLowerCase()
+
+    if (extension && imageExtensions.includes(extension)) {
+      return 'image'
+    } else if (extension && videoExtensions.includes(extension)) {
+      return 'video'
+    } else {
+      return 'unknown' // Puedes manejar otros tipos si es necesario
+    }
+  }
+
   const handleSubmit = async () => {
     const imageData = files.map(async (file, index) => {
-      // Aquí se obtiene la URL prefirmada y se sube el archivo a S3
       const response = await fetch('http://localhost:3001/upload/upload-url', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -33,17 +47,19 @@ const ModalAddFiles: React.FC<ModalAddFilesProps> = ({
 
       const { uploadUrl, key } = await response.json()
 
-      // Subir archivo a S3
       await fetch(uploadUrl, {
         method: 'PUT',
         body: file,
       })
 
+      const fileType = getFileType(file) // Utilizar la función aquí
+
       return {
         description: '',
         category: categoryId,
         order: index + 1,
-        url: `https://ramawebsite.s3.amazonaws.com/${key}`, // Cambia esto según tu configuración
+        url: `https://ramawebsite.s3.amazonaws.com/${key}`,
+        type: fileType, // Añadir type aquí
       }
     })
 
