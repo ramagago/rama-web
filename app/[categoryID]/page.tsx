@@ -42,13 +42,16 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
   const [isDraggable, setIsDraggable] = useState(true)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/images?category=${categoryId}`
+          `http://localhost:3001/images?category=${categoryId}&page=${page}&limit=10`
         )
+        console.log('Response data:', response.data)
         const images: Photo[] = response.data
           .sort((a: Photo, b: Photo) => a.order - b.order)
           .map((image: any) => ({
@@ -57,16 +60,22 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
             selected: false,
             order: image.order,
             description: image.description,
-            type: image.type, // Asegúrate de que el campo description sea el correcto
+            type: image.type,
           }))
-        setItems(images)
+
+        setItems((prevItems) => [...prevItems, ...images])
+
+        if (images.length < 10) {
+          setHasMore(false)
+        }
       } catch (error) {
         console.error('Failed to fetch images:', error)
       }
     }
 
     fetchImages()
-  }, [categoryId])
+    console.log('se ejecuto fetch')
+  }, [categoryId, page])
 
   const handleDragStart = (event: { active: { id: UniqueIdentifier } }) => {
     setActiveId(event.active.id)
@@ -228,6 +237,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
           isDraggable={isDraggable}
           selectedPhotos={selectedPhotos}
           setSelectedPhotos={setSelectedPhotos}
+          fetchMore={() => setPage((prevPage) => prevPage + 1)} // Añadido aquí
+          hasMore={hasMore}
         />
         <DragOverlay>
           {activeItem ? (

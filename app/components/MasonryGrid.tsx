@@ -10,6 +10,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { FaPen } from 'react-icons/fa6'
 import EditDescriptionModal from './EditDescriptionModal'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 interface Photo {
   id: string
@@ -26,6 +27,8 @@ interface MasonryGridProps {
   isDraggable: boolean
   selectedPhotos: string[]
   setSelectedPhotos: React.Dispatch<React.SetStateAction<string[]>>
+  fetchMore: () => void // Nuevo prop
+  hasMore: boolean // Nuevo prop
 }
 
 export const MasonryGrid: React.FC<MasonryGridProps> = ({
@@ -35,13 +38,16 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
   setSelectedPhotos,
   categoryId,
   isDraggable,
+  fetchMore, // Añadido aquí
+  hasMore, // Añadido aquí
 }) => {
   const [columns, setColumns] = useState(2)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedEditImageId, setSelectedEditImageId] = useState<string | null>(
     null
-  ) // Nuevo estado
-  const [currentDescription, setCurrentDescription] = useState<string>('') // Nuevo estado
+  )
+  const [currentDescription, setCurrentDescription] = useState<string>('')
+  const [photos, setPhotos] = useState<Photo[]>(items)
 
   const handleOpenModal = (imageId: string, description: string) => {
     setSelectedEditImageId(imageId)
@@ -131,95 +137,97 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
   }
 
   return (
-    <div className="relative top-12 w-full flex gap-2 p-[100px_2vw]">
-      {Object.keys(columnWrappers).map((columnKey, idx) => (
-        <div key={idx} className="flex flex-1 flex-col gap-2">
-          <SortableContext
-            items={columnWrappers[columnKey]}
-            strategy={horizontalListSortingStrategy}
-          >
-            {columnWrappers[columnKey].map((post) => {
-              const isSelected = selectedPhotos.includes(post.id)
+    <InfiniteScroll
+      dataLength={items.length}
+      next={fetchMore}
+      hasMore={hasMore}
+      loader={<h4 className="text-center">Loading...</h4>}
+      endMessage={<p className="relative text-center"></p>}
+      className="mb-20"
+    >
+      <div className="relative top-12 w-full flex gap-2 px-2 pt-24 mb-24">
+        {Object.keys(columnWrappers).map((columnKey, idx) => (
+          <div key={idx} className="flex flex-1 flex-col gap-2">
+            <SortableContext
+              items={columnWrappers[columnKey]}
+              strategy={horizontalListSortingStrategy}
+            >
+              {columnWrappers[columnKey].map((post) => {
+                const isSelected = selectedPhotos.includes(post.id)
 
-              return (
-                <div
-                  key={post.id}
-                  className={`relative overflow-hidden post ${
-                    isSelected ? 'opacity-40' : ''
-                  }`}
-                >
-                  {!editMode ? (
-                    <Link href={`/${categoryId}/${post.id}`}>
-                      {post.type === 'image' ? (
-                        <Image
-                          className="w-full grayscale-[50%] rounded-xl"
-                          src={post.image}
-                          alt={`Image ${post.id}`}
-                          width={140}
-                          height={140}
-                        />
-                      ) : (
-                        <video
-                          className="w-full grayscale-[50%] rounded-xl"
-                          loop
-                          muted
-                          autoPlay
-                          src={post.image}
-                        ></video>
-                      )}
-                    </Link>
-                  ) : (
-                    <>
-                      <div className="relative overflow-hidden">
-                        <SortableItem id={post.id} draggable={isDraggable}>
-                          {/* Añadir log para ver el objeto post */}
-                          {post.type === 'image' ? (
-                            <Image
-                              onClick={() => handlePhotoClick(post.id)}
-                              className="w-full grayscale-[50%] rounded-xl"
-                              src={post.image}
-                              alt={`Image ${post.id}`}
-                              width={140}
-                              height={140}
-                            />
-                          ) : (
-                            <video
-                              className="w-full grayscale-[50%] rounded-xl"
-                              muted
-                              onClick={() => handlePhotoClick(post.id)}
-                              src={post.image}
-                            ></video>
-                          )}
-                        </SortableItem>
-                        {editMode && (
-                          <FaPen
-                            className="absolute cursor-pointer text-white text-3xl bottom-2 right-2 p-2 bg-gray-500 hover:bg-gray-200 active:bg-gray-700 rounded-full"
-                            onClick={() =>
-                              handleOpenModal(post.id, post.description)
-                            } // Modificado aquí
+                return (
+                  <div
+                    key={post.id}
+                    className={`relative overflow-hidden post ${
+                      isSelected ? 'opacity-40' : ''
+                    }`}
+                  >
+                    {!editMode ? (
+                      <Link href={`/${categoryId}/${post.id}`}>
+                        {post.type === 'image' ? (
+                          <Image
+                            className="w-full grayscale-[50%] rounded-xl"
+                            src={post.image}
+                            alt={`Image ${post.id}`}
+                            width={140}
+                            height={140}
                           />
+                        ) : (
+                          <video
+                            className="w-full grayscale-[50%] rounded-xl"
+                            loop
+                            muted
+                            autoPlay
+                            src={post.image}
+                          ></video>
                         )}
-                      </div>
-                    </>
-                  )}
-                </div>
-              )
-            })}
-          </SortableContext>
-        </div>
-      ))}
-      {/* <video
-        loop
-        muted
-        autoPlay
-        src="https://ramawebsite.s3.us-east-2.amazonaws.com/reel+oceano.m4v"
-      ></video> */}
-      <EditDescriptionModal
-        isVisible={isModalVisible}
-        onClose={handleCloseModal}
-        imageId={selectedEditImageId ?? ''} // Pasar el id de la imagen seleccionada
-        currentDescription={currentDescription} // Pasar la descripción actual de la imagen
-      />
-    </div>
+                      </Link>
+                    ) : (
+                      <>
+                        <div className="relative overflow-hidden">
+                          <SortableItem id={post.id} draggable={isDraggable}>
+                            {post.type === 'image' ? (
+                              <Image
+                                onClick={() => handlePhotoClick(post.id)}
+                                className="w-full grayscale-[50%] rounded-xl"
+                                src={post.image}
+                                alt={`Image ${post.id}`}
+                                width={140}
+                                height={140}
+                              />
+                            ) : (
+                              <video
+                                className="w-full grayscale-[50%] rounded-xl"
+                                muted
+                                onClick={() => handlePhotoClick(post.id)}
+                                src={post.image}
+                              ></video>
+                            )}
+                          </SortableItem>
+                          {editMode && (
+                            <FaPen
+                              className="absolute cursor-pointer text-white text-3xl bottom-2 right-2 p-2 bg-gray-500 hover:bg-gray-200 active:bg-gray-700 rounded-full"
+                              onClick={() =>
+                                handleOpenModal(post.id, post.description)
+                              }
+                            />
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+            </SortableContext>
+          </div>
+        ))}
+        <EditDescriptionModal
+          isVisible={isModalVisible}
+          onClose={handleCloseModal}
+          imageId={selectedEditImageId ?? ''}
+          currentDescription={currentDescription}
+        />
+      </div>
+    </InfiniteScroll>
   )
 }
