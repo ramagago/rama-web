@@ -15,6 +15,7 @@ interface Photo {
   id: string
   image: string
   description: string
+  type: string
 }
 
 interface MasonryGridProps {
@@ -149,26 +150,46 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
                 >
                   {!editMode ? (
                     <Link href={`/${categoryId}/${post.id}`}>
-                      <Image
-                        className="w-full grayscale-[50%] rounded-xl"
-                        src={post.image}
-                        alt={`Image ${post.id}`}
-                        width={140}
-                        height={140}
-                      />
+                      {post.type === 'image' ? (
+                        <Image
+                          className="w-full grayscale-[50%] rounded-xl"
+                          src={post.image}
+                          alt={`Image ${post.id}`}
+                          width={140}
+                          height={140}
+                        />
+                      ) : (
+                        <video
+                          className="w-full grayscale-[50%] rounded-xl"
+                          loop
+                          muted
+                          autoPlay
+                          src={post.image}
+                        ></video>
+                      )}
                     </Link>
                   ) : (
                     <>
                       <div className="relative overflow-hidden">
                         <SortableItem id={post.id} draggable={isDraggable}>
-                          <Image
-                            onClick={() => handlePhotoClick(post.id)}
-                            className="w-full grayscale-[50%] rounded-xl"
-                            src={post.image}
-                            alt={`Image ${post.id}`}
-                            width={140}
-                            height={140}
-                          />
+                          {/* Añadir log para ver el objeto post */}
+                          {post.type === 'image' ? (
+                            <Image
+                              onClick={() => handlePhotoClick(post.id)}
+                              className="w-full grayscale-[50%] rounded-xl"
+                              src={post.image}
+                              alt={`Image ${post.id}`}
+                              width={140}
+                              height={140}
+                            />
+                          ) : (
+                            <video
+                              className="w-full grayscale-[50%] rounded-xl"
+                              muted
+                              onClick={() => handlePhotoClick(post.id)}
+                              src={post.image}
+                            ></video>
+                          )}
                         </SortableItem>
                         {editMode && (
                           <FaPen
@@ -187,6 +208,12 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
           </SortableContext>
         </div>
       ))}
+      {/* <video
+        loop
+        muted
+        autoPlay
+        src="https://ramawebsite.s3.us-east-2.amazonaws.com/reel+oceano.m4v"
+      ></video> */}
       <EditDescriptionModal
         isVisible={isModalVisible}
         onClose={handleCloseModal}

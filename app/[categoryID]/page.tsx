@@ -23,6 +23,7 @@ interface Photo {
   selected: boolean
   order: number
   description: string
+  type: string
 }
 
 interface PhotoGalleryProps {
@@ -55,7 +56,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
             image: image.url,
             selected: false,
             order: image.order,
-            description: image.description, // Asegúrate de que el campo description sea el correcto
+            description: image.description,
+            type: image.type, // Asegúrate de que el campo description sea el correcto
           }))
         setItems(images)
       } catch (error) {
