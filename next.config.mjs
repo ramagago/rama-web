@@ -9,7 +9,7 @@ const nextConfig = {
   webpack(config) {
     return config
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
   images: {
     domains: [
       'ramawebsite.s3.us-east-2.amazonaws.com',
