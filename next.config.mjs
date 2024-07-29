@@ -11,7 +11,10 @@ const nextConfig = {
   },
   reactStrictMode: true,
   images: {
-    domains: ['ramawebsite.s3.us-east-2.amazonaws.com'],
+    domains: [
+      'ramawebsite.s3.us-east-2.amazonaws.com',
+      'ramawebsite.s3.amazonaws.com',
+    ],
   },
 }
 

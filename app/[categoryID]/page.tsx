@@ -55,7 +55,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
             image: image.url,
             selected: false,
             order: image.order,
-            descritpion: image.descritpion,
+            description: image.description, // Asegúrate de que el campo description sea el correcto
           }))
         setItems(images)
       } catch (error) {
