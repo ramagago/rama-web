@@ -11,9 +11,13 @@ const nextConfig = {
   },
   reactStrictMode: false,
   images: {
-    domains: [
-      'ramawebsite.s3.us-east-2.amazonaws.com',
-      'ramawebsite.s3.amazonaws.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ramawebsite.s3.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 }

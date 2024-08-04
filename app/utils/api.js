@@ -1,6 +1,7 @@
 // utils/api.js
+const apiUrl = process.env.API_URL
 export const fetchImages = async (token) => {
-  const response = await fetch('http://localhost:3000/images', {
+  const response = await fetch(`${apiUrl}/images`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -9,7 +10,7 @@ export const fetchImages = async (token) => {
 }
 
 export const updateImages = async (images, token) => {
-  const response = await fetch('http://localhost:3000/images', {
+  const response = await fetch(`${apiUrl}/images`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -21,7 +22,7 @@ export const updateImages = async (images, token) => {
 }
 
 export const addImage = async (image, token) => {
-  const response = await fetch('http://localhost:3000/images', {
+  const response = await fetch(`${apiUrl}/images`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -33,7 +34,7 @@ export const addImage = async (image, token) => {
 }
 
 export const deleteImage = async (id, token) => {
-  await fetch(`http://localhost:3000/images/${id}`, {
+  await fetch(`${apiUrl}/images/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
