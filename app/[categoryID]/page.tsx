@@ -32,6 +32,8 @@ interface PhotoGalleryProps {
   }
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
   const categoryId = params.categoryID
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -48,8 +50,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
+        console.log('hola ', apiUrl)
         const response = await axios.get(
-          `http://localhost:3001/images?category=${categoryId}&page=${page}&limit=10`
+          `${apiUrl}/images?category=${categoryId}&page=${page}&limit=10`
         )
         console.log('Response data:', response.data)
         const images: Photo[] = response.data
@@ -97,7 +100,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
         // Update the order in the database
         axios
           .patch(
-            'http://localhost:3001/images/order',
+            `${apiUrl}/images/order`,
             newItems.map((item, index) => ({
               id: parseInt(item.id),
               order: index,
@@ -116,7 +119,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
   const handleDeletePhotos = async (selectedPhotos: string[]) => {
     try {
       // Delete photos in the backend
-      const response = await axios.delete('http://localhost:3001/images/many', {
+      const response = await axios.delete(`${apiUrl}/images/many`, {
         data: selectedPhotos, // Asegúrate de enviar el cuerpo en formato JSON
         headers: {
           'Content-Type': 'application/json', // Establece el tipo de contenido como JSON
