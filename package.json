@@ -16,6 +16,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.16.1",
     "axios": "^1.7.2",
+    "browser-image-compression": "^2.0.2",
     "next": "14.2.3",
     "next-compose-plugins": "^2.2.1",
     "next-videos": "^1.4.1",

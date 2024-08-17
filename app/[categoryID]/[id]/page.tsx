@@ -13,23 +13,23 @@ import { useState, useEffect, useMemo, useContext } from 'react'
 import { AuthContext } from '@/app/context/authContext'
 import PhotoGallery from '../page'
 import VideoComponent from '../../components/VideoComponent'
+import axios from 'axios'
 
 const PhotoDetails: React.FC<{
   params: { id: string; categoryID: string }
 }> = ({ params }) => {
-  const searchParams = useSearchParams()
-
-  const description = searchParams.get('description') || ''
-  const imageUrl = searchParams.get('image') || ''
-  const type = searchParams.get('type') || 'image'
-
+  const { id, categoryID } = params
+  const [description, setDescription] = useState<string>('')
+  const [imageUrl, setImageUrl] = useState<string>('')
+  const [blurDataUrl, setBlurDataUrl] = useState<string>('')
+  const [type, setType] = useState<string>('image')
   const [imageDimensions, setImageDimensions] = useState<{
     width: number
     height: number
   } | null>(null)
-
   const [designImage, setDesignImage] = useState<StaticImageData | null>(null)
   const [isImageLoaded, setIsImageLoaded] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const context = useContext(AuthContext)
 
@@ -63,6 +63,26 @@ const PhotoDetails: React.FC<{
   )
 
   useEffect(() => {
+    const fetchImageDetails = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL
+        const response = await axios.get(`${apiUrl}/images/${id}`)
+        const data = response.data
+
+        setDescription(data.description || '')
+        setImageUrl(data.normalUrl || '')
+        setBlurDataUrl(data.blurDataUrl || '')
+        setType(data.type || 'image')
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching image details:', error)
+      }
+    }
+
+    fetchImageDetails()
+  }, [id])
+
+  useEffect(() => {
     const calculateImageDimensions = () => {
       const img = new window.Image()
       img.src = imageUrl
@@ -75,11 +95,11 @@ const PhotoDetails: React.FC<{
 
         if (aspectRatio > 1) {
           if (screenWidth < 640) {
-            dynamicWidth = screenWidth //
+            dynamicWidth = screenWidth
           } else if (screenWidth < 960) {
             dynamicWidth = screenWidth * 0.45
           } else {
-            dynamicWidth = screenWidth * 0.5 //
+            dynamicWidth = screenWidth * 0.5
           }
         } else {
           if (screenWidth < 640) {
@@ -100,7 +120,9 @@ const PhotoDetails: React.FC<{
       }
     }
 
-    calculateImageDimensions()
+    if (imageUrl) {
+      calculateImageDimensions()
+    }
 
     const handleResize = () => {
       calculateImageDimensions()
@@ -116,7 +138,6 @@ const PhotoDetails: React.FC<{
   useEffect(() => {
     const designNumber = Math.floor(Math.random() * imagesArray.length)
     setDesignImage(imagesArray[designNumber])
-    console.log(designNumber)
   }, [imagesArray])
 
   useEffect(() => {
@@ -126,6 +147,10 @@ const PhotoDetails: React.FC<{
       img.onload = () => setIsImageLoaded(true)
     }
   }, [designImage])
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div>
@@ -139,12 +164,12 @@ const PhotoDetails: React.FC<{
             imageDimensions ? (
               <Image
                 src={imageUrl}
-                quality={80}
-                placeholder="empty"
+                placeholder="blur"
+                blurDataURL={blurDataUrl}
                 alt={description}
                 width={imageDimensions.width}
                 height={imageDimensions.height}
-                className="xs:rounded-t-2xl  sm:rounded-l-3xl object-cover"
+                className="xs:rounded-t-2xl sm:rounded-l-3xl object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
@@ -173,7 +198,7 @@ const PhotoDetails: React.FC<{
           </div>
         </div>
       </div>
-      <PhotoGallery params={params} />
+      <PhotoGallery params={{ id, categoryID }} />
     </div>
   )
 }

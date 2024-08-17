@@ -14,9 +14,12 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 interface Photo {
   id: string
-  image: string
+  blurDataUrl: string
+  lowQualityUrl: string
+  normalUrl: string
   description: string
   type: string
+  videoPreviewUrl: string
 }
 
 interface MasonryGridProps {
@@ -47,7 +50,6 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
     null
   )
   const [currentDescription, setCurrentDescription] = useState<string>('')
-  const [photos, setPhotos] = useState<Photo[]>(items)
 
   const handleOpenModal = (imageId: string, description: string) => {
     setSelectedEditImageId(imageId)
@@ -155,6 +157,7 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
               {columnWrappers[columnKey].map((post) => {
                 const isSelected = selectedPhotos.includes(post.id)
 
+                console.log('post', post)
                 return (
                   <div
                     key={post.id}
@@ -166,20 +169,17 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
                       <Link
                         href={{
                           pathname: `/${categoryId}/${post.id}`,
-                          query: {
-                            image: post.image,
-                            description: post.description,
-                            type: post.type,
-                          },
                         }}
                       >
                         {post.type === 'image' ? (
                           <Image
                             className="w-full grayscale-[50%] rounded-xl"
-                            src={post.image}
+                            src={post.lowQualityUrl} // Cambia a lowQualityUrl
                             alt={`Image ${post.id}`}
                             width={140}
                             height={140}
+                            placeholder="blur"
+                            blurDataURL={post.blurDataUrl}
                           />
                         ) : (
                           <video
@@ -187,7 +187,7 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
                             loop
                             muted
                             autoPlay
-                            src={post.image}
+                            src={post.videoPreviewUrl} // Usa videoPreviewUrl para el video
                           ></video>
                         )}
                       </Link>
@@ -199,17 +199,19 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
                               <Image
                                 onClick={() => handlePhotoClick(post.id)}
                                 className="w-full grayscale-[50%] rounded-xl"
-                                src={post.image}
+                                src={post.lowQualityUrl} // Cambia a lowQualityUrl
                                 alt={`Image ${post.id}`}
                                 width={140}
                                 height={140}
+                                placeholder="blur"
+                                blurDataURL={post.blurDataUrl}
                               />
                             ) : (
                               <video
                                 className="w-full grayscale-[50%] rounded-xl"
                                 muted
                                 onClick={() => handlePhotoClick(post.id)}
-                                src={post.image}
+                                src={post.videoPreviewUrl} // Usa videoPreviewUrl para el video
                               ></video>
                             )}
                           </SortableItem>

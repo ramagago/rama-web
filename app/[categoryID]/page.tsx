@@ -19,16 +19,20 @@ import { FaArrowLeft } from 'react-icons/fa6'
 
 interface Photo {
   id: string
-  image: string
+  blurDataUrl: string
+  lowQualityUrl: string
+  normalUrl: string
   selected: boolean
   order: number
   description: string
   type: string
+  videoPreviewUrl: string
 }
 
 interface PhotoGalleryProps {
   params: {
     categoryID: string
+    id?: string
   }
 }
 
@@ -52,20 +56,14 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        console.log('hola ', apiUrl)
         const response = await axios.get(
           `${apiUrl}/images?category=${categoryId}&page=${page}&limit=10`
         )
-        console.log('Response data:', response.data)
         const images: Photo[] = response.data
           .sort((a: Photo, b: Photo) => a.order - b.order)
           .map((image: any) => ({
-            id: image.id.toString(),
-            image: image.url,
+            ...image,
             selected: false,
-            order: image.order,
-            description: image.description,
-            type: image.type,
           }))
 
         setItems((prevItems) => [...prevItems, ...images])
@@ -252,7 +250,9 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
             <div className="relative overflow-hidden post">
               <Image
                 className="w-full grayscale-[50%] rounded-lg"
-                src={activeItem.image}
+                src={activeItem.normalUrl} // Usa la URL de normal quality aquí
+                placeholder="blur"
+                blurDataURL={activeItem.blurDataUrl}
                 alt={`Image ${activeItem.id}`}
                 width={140}
                 height={140}

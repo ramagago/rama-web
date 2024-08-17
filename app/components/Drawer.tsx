@@ -66,12 +66,12 @@ export default function SwipeableEdgeDrawer(props: Props) {
       />
       <button
         onClick={toggleDrawer(!open)}
-        className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[1301] transition-transform duration-300 ${
+        className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[1301] transition-transform duration-300 ${
           open ? 'translate-y-0' : 'translate-y-0'
         }`}
       >
         <FaAngleUp
-          className={`text-gray-500 text-5xl bg-white rounded-full p-2 opacity-100 transition-transform duration-300 hover:opacity-90 hover:text-gray-300 ${
+          className={`text-gray-500 text-5xl bg-white rounded-full p-2 opacity-60 transition-transform duration-300 hover:opacity-90 hover:text-gray-300 ${
             !open ? 'rotate-0' : 'rotate-180'
           } `}
         />
@@ -103,7 +103,10 @@ export default function SwipeableEdgeDrawer(props: Props) {
         >
           {open ? <Puller /> : null}
           {!open ? (
-            <Typography sx={{ p: 2, color: 'text.secondary' }}>
+            <Typography
+              className="text-center mt-2"
+              sx={{ p: 2, color: 'text.secondary' }}
+            >
               Contact
             </Typography>
           ) : null}

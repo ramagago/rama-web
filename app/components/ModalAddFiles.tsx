@@ -1,7 +1,7 @@
-// components/ModalAddFiles.tsx
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useDropzone } from 'react-dropzone'
+import imageCompression from 'browser-image-compression'
 
 interface ModalAddFilesProps {
   isOpen: boolean
@@ -24,7 +24,7 @@ const ModalAddFiles: React.FC<ModalAddFilesProps> = ({
 
   const getFileType = (file: File): string => {
     const imageExtensions = ['jpg', 'jpeg', 'png', 'heif']
-    const videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'm4v'] // Añadido 'm4v' aquí
+    const videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'm4v']
 
     const extension = file.name.split('.').pop()?.toLowerCase()
 
@@ -33,33 +33,74 @@ const ModalAddFiles: React.FC<ModalAddFilesProps> = ({
     } else if (extension && videoExtensions.includes(extension)) {
       return 'video'
     } else {
-      return 'unknown' // Puedes manejar otros tipos si es necesario
+      return 'unknown'
     }
+  }
+
+  const compressImage = async (
+    file: File,
+    maxSizeMB: number,
+    maxWidthOrHeight: number,
+    useWebWorker: boolean = true
+  ) => {
+    const options = {
+      maxSizeMB,
+      maxWidthOrHeight,
+      useWebWorker,
+    }
+    return await imageCompression(file, options)
+  }
+
+  const uploadFile = async (compressedFile: File, suffix: string) => {
+    const response = await fetch('http://localhost:3001/upload/upload-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: `${compressedFile.name}-${suffix}` }),
+    })
+
+    const { uploadUrl, key } = await response.json()
+
+    await fetch(uploadUrl, {
+      method: 'PUT',
+      body: compressedFile,
+    })
+
+    return `https://ramawebsite.s3.amazonaws.com/${key}`
   }
 
   const handleSubmit = async () => {
     const imageData = files.map(async (file, index) => {
-      const response = await fetch('http://localhost:3001/upload/upload-url', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: file.name }),
-      })
+      const fileType = getFileType(file)
+      let lowQualityUrl, normalUrl, blurDataUrl, videoPreviewUrl
 
-      const { uploadUrl, key } = await response.json()
+      if (fileType === 'image') {
+        // Compresión para imágenes
+        const lowQualityFile = await compressImage(file, 0.5, 1000)
+        const normalFile = await compressImage(file, 1, 1000)
 
-      await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file,
-      })
+        // Generación de blurDataUrl
+        blurDataUrl = await new Promise<string>(async (resolve) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.readAsDataURL(await compressImage(file, 0.001, 50))
+        })
 
-      const fileType = getFileType(file) // Utilizar la función aquí
+        // Subida de imágenes a S3
+        lowQualityUrl = await uploadFile(lowQualityFile, 'low-quality')
+        normalUrl = await uploadFile(normalFile, 'normal')
+      } else if (fileType === 'video') {
+        normalUrl = await uploadFile(file, 'normal')
+      }
 
       return {
         description: '',
         category: categoryId,
         order: index + 1,
-        url: `https://ramawebsite.s3.amazonaws.com/${key}`,
-        type: fileType, // Añadir type aquí
+        lowQualityUrl, // Solo para imágenes
+        normalUrl,
+        blurDataUrl, // Solo para imágenes
+        videoPreviewUrl, // Solo para videos
+        type: fileType,
       }
     })
 
