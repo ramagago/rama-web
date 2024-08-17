@@ -7,9 +7,8 @@ import { AuthContext, AuthContextProps } from '../context/authContext' // Import
 import Switch from './Switch'
 
 const Navbar: React.FC = () => {
-  const { isAdmin, setIsAdmin, editMode, setEditMode } = useContext(
-    AuthContext
-  ) as AuthContextProps // Asignar tipo AuthContextProps
+  const { isAdmin, setIsAdmin, editMode, setEditMode, isPhotoDetail } =
+    useContext(AuthContext) as AuthContextProps
 
   const [menuOpen, setMenuOpen] = useState<boolean>(false) // Tipar como boolean
   const [isHomePage, setIsHomePage] = useState<boolean>(true) // Tipar como boolean o null
@@ -44,7 +43,11 @@ const Navbar: React.FC = () => {
   return (
     <nav
       className={`h-20 fixed w-full flex justify-between items-center z-50 ${
-        isHomePage ? 'bg-transparent' : 'bg-white'
+        isPhotoDetail
+          ? 'bg-transparent xs:bg-white'
+          : isHomePage
+          ? 'bg-transparent'
+          : 'bg-white'
       }`}
     >
       <div></div>
@@ -52,19 +55,22 @@ const Navbar: React.FC = () => {
         <h1
           className={`${
             isHomePage ? 'text-white' : 'text-gray-500'
-          } text-3xl cursor-pointer`}
+          } text-xl md:text-3xl cursor-pointer ${
+            isPhotoDetail ? 'hidden xs:block' : 'block'
+          }`}
           onClick={handleLinkClick}
         >
           RAMA GAGO
         </h1>
       </Link>
       <BurgerIcon
+        isPhotoDetail={isPhotoDetail}
         menuOpen={menuOpen}
         handleToggle={handleToggle}
         isHomePage={isHomePage}
       />
       <div
-        className={`fixed inset-0 bg-white z-40 flex flex-col justify-center items-center transition-opacity ${
+        className={`fixed inset-0 bg-white z-40 flex flex-col justify-center items-center transition-opacity text-4xl sm:text-5xl md:text-6xl ${
           menuOpen
             ? 'opacity-100 pointer-events-auto duration-700'
             : 'opacity-0 pointer-events-none duration-300'
@@ -72,35 +78,35 @@ const Navbar: React.FC = () => {
       >
         <Link
           href="/fashion"
-          className="text-6xl my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
+          className=" my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
           onClick={handleLinkClick}
         >
           FASHION
         </Link>
         <Link
           href="/wedding"
-          className="text-6xl my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
+          className=" my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
           onClick={handleLinkClick}
         >
           WEDDING
         </Link>
         <Link
           href="/home-decor"
-          className="text-6xl my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
+          className=" my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
           onClick={handleLinkClick}
         >
           HOME & DECOR
         </Link>
         <Link
           href="/lifestyle"
-          className="text-6xl my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
+          className=" my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
           onClick={handleLinkClick}
         >
           LIFESTYLE
         </Link>
         <Link
           href="/#contact"
-          className="text-6xl my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
+          className=" my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
           onClick={handleLinkClick}
         >
           CONTACT
@@ -108,7 +114,7 @@ const Navbar: React.FC = () => {
         {isAdmin && (
           <div className="flex items-center">
             <button
-              className="text-6xl mb-2 mt-16 hover:text-gray-300 active:text-gray-500"
+              className=" mb-2 mt-16 hover:text-gray-300 active:text-gray-500"
               onClick={handleEditModeClick}
             >
               EDIT MODE
@@ -119,7 +125,7 @@ const Navbar: React.FC = () => {
         {isAdmin && (
           <button
             onClick={handleLogout}
-            className="text-6xl my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
+            className=" my-2 hover:text-gray-300 focus:text-gray-300 active:text-gray-500"
           >
             LOG OUT
           </button>

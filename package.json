@@ -19,11 +19,13 @@
     "next": "14.2.3",
     "next-compose-plugins": "^2.2.1",
     "next-videos": "^1.4.1",
+    "plaiceholder": "^3.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
     "react-icons": "^5.2.1",
-    "react-infinite-scroll-component": "^6.1.0"
+    "react-infinite-scroll-component": "^6.1.0",
+    "sharp": "^0.33.4"
   },
   "devDependencies": {
     "@types/node": "^20",

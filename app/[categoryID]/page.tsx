@@ -47,6 +47,8 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
 
+  const isPhotoDetail = contexto?.isPhotoDetail
+
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -173,52 +175,54 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
   return (
     <div className="bg-white">
       <SwipeableEdgeDrawer />
-      <nav className="bg-white w-screen h-12 flex justify-center border-gray-300 fixed top-20 z-40">
-        <div className="cursor-pointer py-2 px-4">
-          <Link href="/fashion">
-            <div
-              className={`transition-all duration-100 ${
-                categoryId === 'fashion' ? 'text-red-800' : 'text-gray-600'
-              } hover:text-gray-400`}
-            >
-              Fashion
-            </div>
-          </Link>
-        </div>
-        <div className="cursor-pointer py-2 px-4">
-          <Link href="/home">
-            <div
-              className={`transition-all duration-100 ${
-                categoryId === 'home' ? 'text-red-800' : 'text-gray-600'
-              } hover:text-gray-400`}
-            >
-              Home
-            </div>
-          </Link>
-        </div>
-        <div className="cursor-pointer py-2 px-4">
-          <Link href="/lifestyle">
-            <div
-              className={`transition-all duration-100 ${
-                categoryId === 'lifestyle' ? 'text-red-800' : 'text-gray-600'
-              } hover:text-gray-400`}
-            >
-              Lifestyle
-            </div>
-          </Link>
-        </div>
-        <div className="cursor-pointer py-2 px-4">
-          <Link href="/weddings">
-            <div
-              className={`transition-all duration-100 ${
-                categoryId === 'weddings' ? 'text-red-800' : 'text-gray-600'
-              } hover:text-gray-400`}
-            >
-              Weddings
-            </div>
-          </Link>
-        </div>
-      </nav>
+      {!isPhotoDetail && (
+        <nav className="bg-white w-screen h-12 flex justify-center border-gray-300 fixed top-20 z-40">
+          <div className="cursor-pointer py-2 px-4">
+            <Link href="/fashion">
+              <div
+                className={`transition-all duration-100 ${
+                  categoryId === 'fashion' ? 'text-red-800' : 'text-gray-600'
+                } hover:text-gray-400`}
+              >
+                Fashion
+              </div>
+            </Link>
+          </div>
+          <div className="cursor-pointer py-2 px-4">
+            <Link href="/home">
+              <div
+                className={`transition-all duration-100 ${
+                  categoryId === 'home' ? 'text-red-800' : 'text-gray-600'
+                } hover:text-gray-400`}
+              >
+                Home
+              </div>
+            </Link>
+          </div>
+          <div className="cursor-pointer py-2 px-4">
+            <Link href="/lifestyle">
+              <div
+                className={`transition-all duration-100 ${
+                  categoryId === 'lifestyle' ? 'text-red-800' : 'text-gray-600'
+                } hover:text-gray-400`}
+              >
+                Lifestyle
+              </div>
+            </Link>
+          </div>
+          <div className="cursor-pointer py-2 px-4">
+            <Link href="/weddings">
+              <div
+                className={`transition-all duration-100 ${
+                  categoryId === 'weddings' ? 'text-red-800' : 'text-gray-600'
+                } hover:text-gray-400`}
+              >
+                Weddings
+              </div>
+            </Link>
+          </div>
+        </nav>
+      )}
       {editMode && (
         <button
           onClick={handleSelectButtonClick}

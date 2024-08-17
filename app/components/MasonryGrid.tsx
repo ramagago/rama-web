@@ -27,8 +27,8 @@ interface MasonryGridProps {
   isDraggable: boolean
   selectedPhotos: string[]
   setSelectedPhotos: React.Dispatch<React.SetStateAction<string[]>>
-  fetchMore: () => void // Nuevo prop
-  hasMore: boolean // Nuevo prop
+  fetchMore: () => void
+  hasMore: boolean
 }
 
 export const MasonryGrid: React.FC<MasonryGridProps> = ({
@@ -38,8 +38,8 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
   setSelectedPhotos,
   categoryId,
   isDraggable,
-  fetchMore, // Añadido aquí
-  hasMore, // Añadido aquí
+  fetchMore,
+  hasMore,
 }) => {
   const [columns, setColumns] = useState(2)
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -145,7 +145,7 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
       endMessage={<p className="relative text-center"></p>}
       className="mb-20"
     >
-      <div className="relative top-12 w-full flex gap-2 px-2 pt-24 mb-24">
+      <div className="relative top-12 w-full flex gap-2 px-2 xs:pt-24 mb-24">
         {Object.keys(columnWrappers).map((columnKey, idx) => (
           <div key={idx} className="flex flex-1 flex-col gap-2">
             <SortableContext
@@ -163,7 +163,16 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
                     }`}
                   >
                     {!editMode ? (
-                      <Link href={`/${categoryId}/${post.id}`}>
+                      <Link
+                        href={{
+                          pathname: `/${categoryId}/${post.id}`,
+                          query: {
+                            image: post.image,
+                            description: post.description,
+                            type: post.type,
+                          },
+                        }}
+                      >
                         {post.type === 'image' ? (
                           <Image
                             className="w-full grayscale-[50%] rounded-xl"

@@ -6,6 +6,8 @@ export interface AuthContextProps {
   setIsAdmin: (isAdmin: boolean) => void
   editMode: boolean
   setEditMode: (editMode: boolean) => void
+  isPhotoDetail: boolean | null
+  setIsPhotoDetail: (isPhotoDetail: boolean) => void
 }
 
 export const AuthContext = createContext<AuthContextProps | undefined>(
@@ -18,7 +20,8 @@ interface AuthProviderProps {
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(true)
-  const [editMode, setEditMode] = useState(true)
+  const [editMode, setEditMode] = useState(false)
+  const [isPhotoDetail, setIsPhotoDetail] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken')
@@ -29,7 +32,14 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAdmin, setIsAdmin, editMode, setEditMode }}
+      value={{
+        isAdmin,
+        setIsAdmin,
+        editMode,
+        setEditMode,
+        isPhotoDetail,
+        setIsPhotoDetail,
+      }}
     >
       {children}
     </AuthContext.Provider>
