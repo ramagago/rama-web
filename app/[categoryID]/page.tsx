@@ -247,7 +247,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({ params }) => {
         />
         <DragOverlay>
           {activeItem ? (
-            <div className="relative overflow-hidden post">
+            <div className="hidden sm:block relative overflow-hidden post">
               <Image
                 className="w-full grayscale-[50%] rounded-lg"
                 src={activeItem.normalUrl} // Usa la URL de normal quality aquí
