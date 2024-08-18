@@ -147,7 +147,7 @@ export const MasonryGrid: React.FC<MasonryGridProps> = ({
       endMessage={<p className="relative text-center"></p>}
       className="mb-20"
     >
-      <div className="relative top-12 w-full flex gap-2 px-2 xs:pt-24 mb-24">
+      <div className="relative top-12 w-full flex gap-2 px-2 pt-24 mb-24">
         {Object.keys(columnWrappers).map((columnKey, idx) => (
           <div key={idx} className="flex flex-1 flex-col gap-2">
             <SortableContext
