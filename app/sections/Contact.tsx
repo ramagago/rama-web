@@ -1,6 +1,8 @@
 'use client'
 import { FormEvent, useState } from 'react'
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 const Contact = () => {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
@@ -14,7 +16,7 @@ const Contact = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/customer/contact', {
+      const response = await fetch(`${apiUrl}/customer/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

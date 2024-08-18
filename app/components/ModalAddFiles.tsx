@@ -9,6 +9,8 @@ interface ModalAddFilesProps {
   categoryId: string
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 const ModalAddFiles: React.FC<ModalAddFilesProps> = ({
   isOpen,
   onClose,
@@ -52,7 +54,7 @@ const ModalAddFiles: React.FC<ModalAddFilesProps> = ({
   }
 
   const uploadFile = async (compressedFile: File, suffix: string) => {
-    const response = await fetch('http://localhost:3001/upload/upload-url', {
+    const response = await fetch(`${apiUrl}/upload/upload-url`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key: `${compressedFile.name}-${suffix}` }),
@@ -107,7 +109,7 @@ const ModalAddFiles: React.FC<ModalAddFilesProps> = ({
     const imageDataArray = await Promise.all(imageData)
 
     try {
-      const response = await fetch('http://localhost:3001/images', {
+      const response = await fetch(`${apiUrl}/images`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

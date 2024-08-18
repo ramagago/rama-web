@@ -9,6 +9,8 @@ interface ModalProps {
   currentDescription: string // Añadimos la descripción actual de la imagen
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 const EditDescriptionModal: FC<ModalProps> = ({
   isVisible,
   onClose,
@@ -21,7 +23,7 @@ const EditDescriptionModal: FC<ModalProps> = ({
     e.preventDefault()
 
     try {
-      const response = await fetch('http://localhost:3001/images/description', {
+      const response = await fetch(`${apiUrl}/images/description`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

@@ -4,6 +4,8 @@ import { useContext, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AuthContext, AuthContextProps } from '../context/authContext'
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -22,7 +24,7 @@ const Login = () => {
     setError('') // Reset error message
 
     try {
-      const res = await fetch('http://localhost:3001/auth/login', {
+      const res = await fetch(`${apiUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
