@@ -5,7 +5,9 @@ const WeddingBanner = () => {
     <div className="bg-black">
       <Link href={'./weddings'} className=" group relative">
         <video
-          src={weddingReel}
+          src={
+            'https://ramawebsite.s3.us-east-2.amazonaws.com/wedding-reel.mov'
+          }
           autoPlay
           loop
           muted
